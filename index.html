@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Paisa — Your money, on speaking terms</title>
+<meta name="description" content="One AI agent for your spends, insurance, SIPs and taxes. Ask anything about your money — Paisa answers from your actual data." />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#0A0D16;
+    --panel:#121626;
+    --panel-hi:#1A2033;
+    --line:rgba(232,194,104,.13);
+    --line-soft:rgba(255,255,255,.07);
+    --ink:#F2EFE6;
+    --dim:#8B91A3;
+    --gold:#E8C268;
+    --gold-dim:#A88B45;
+    --green:#7ED9A1;
+    --red:#F09090;
+    --serif:'Instrument Serif',Georgia,serif;
+    --sans:'Inter',-apple-system,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--sans);
+    font-size:16px;line-height:1.6;overflow-x:hidden;
+  }
+  ::selection{background:rgba(232,194,104,.25)}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  .eyebrow{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold-dim);font-weight:600;
+  }
+  .btn{
+    display:inline-block;padding:14px 26px;border-radius:12px;border:none;
+    font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer;
+    transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn-gold{
+    background:linear-gradient(135deg,var(--gold),#D4AC4F);color:#0A0D16;
+    box-shadow:0 10px 30px -12px rgba(232,194,104,.5);
+  }
+  .btn-gold:hover{box-shadow:0 14px 36px -12px rgba(232,194,104,.65)}
+  .btn-ghost{
+    background:transparent;color:var(--ink);border:1px solid var(--line);
+  }
+  .btn-ghost:hover{border-color:var(--gold-dim)}
+
+  /* ── nav ── */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,13,22,.82);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav-in{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;max-width:1120px;margin:0 auto;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:24px}
+  .logo-mark{
+    width:30px;height:30px;border:1px solid var(--gold);border-radius:9px;
+    display:grid;place-items:center;color:var(--gold);font-size:17px;
+  }
+  .nav-links{display:flex;gap:28px;font-size:14px;color:var(--dim)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{padding:10px 18px;font-size:13.5px}
+
+  /* ── hero ── */
+  .hero{position:relative;padding:84px 0 70px}
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(60% 45% at 70% 0%,rgba(232,194,104,.09),transparent 70%);
+  }
+  .hero-grid{
+    display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;
+    position:relative;
+  }
+  h1{
+    font-family:var(--serif);font-weight:400;font-size:clamp(42px,5.6vw,68px);
+    line-height:1.06;letter-spacing:.005em;margin:18px 0 20px;
+  }
+  h1 em{font-style:italic;color:var(--gold)}
+  .hero p.lead{font-size:17.5px;color:var(--dim);max-width:480px;line-height:1.7}
+  .hero-ctas{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+  .trust{margin-top:26px;font-size:12.5px;color:var(--dim);display:flex;gap:18px;flex-wrap:wrap}
+  .trust span{display:flex;align-items:center;gap:7px}
+  .dot{width:5px;height:5px;border-radius:3px;background:var(--green)}
+
+  /* phone chat demo */
+  .phone{
+    background:linear-gradient(160deg,#161B2E,#0E1220);
+    border:1px solid rgba(232,194,104,.3);border-radius:26px;
+    padding:22px;box-shadow:0 40px 80px -40px rgba(232,194,104,.28),0 30px 60px -30px rgba(0,0,0,.6);
+    max-width:400px;margin-left:auto;
+  }
+  .phone-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-bottom:14px;border-bottom:1px solid var(--line-soft);margin-bottom:16px;
+  }
+  .phone-title{display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:18px}
+  .phone-title .logo-mark{width:24px;height:24px;font-size:13px;border-radius:7px}
+  .live{font-size:10px;letter-spacing:.14em;color:var(--green);display:flex;align-items:center;gap:6px}
+  .live::before{content:"";width:6px;height:6px;border-radius:3px;background:var(--green);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  .chat{display:flex;flex-direction:column;gap:11px;min-height:268px}
+  .bubble{
+    max-width:88%;padding:11px 14px;font-size:13.5px;line-height:1.6;
+    border-radius:14px;opacity:0;transform:translateY(6px);
+    animation:rise .35s ease forwards;white-space:pre-wrap;
+  }
+  @keyframes rise{to{opacity:1;transform:none}}
+  .bubble.user{
+    align-self:flex-end;background:rgba(232,194,104,.13);
+    border:1px solid rgba(232,194,104,.3);border-radius:14px 14px 4px 14px;
+  }
+  .bubble.ai{
+    align-self:flex-start;background:var(--panel);
+    border:1px solid var(--line-soft);border-radius:14px 14px 14px 4px;
+  }
+  .caret{display:inline-block;width:1px;height:14px;background:var(--gold);vertical-align:-2px;animation:pulse .8s infinite}
+  .typing{display:inline-flex;gap:5px;padding:4px 2px}
+  .typing i{width:6px;height:6px;border-radius:3px;background:var(--gold);animation:pulse 1.1s infinite}
+  .typing i:nth-child(2){animation-delay:.18s}
+  .typing i:nth-child(3){animation-delay:.36s}
+
+  /* ── scattered strip ── */
+  .strip{padding:34px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+  .strip-in{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  .scattered{display:flex;gap:10px;flex-wrap:wrap}
+  .chip{
+    font-size:12.5px;color:var(--dim);border:1px dashed var(--line-soft);
+    padding:7px 13px;border-radius:9px;transform:rotate(var(--r,0deg));
+  }
+  .strip-msg{font-family:var(--serif);font-size:22px;color:var(--ink)}
+  .strip-msg em{color:var(--gold);font-style:italic}
+
+  /* ── sections ── */
+  section{padding:88px 0}
+  .sec-head{max-width:560px;margin-bottom:48px}
+  h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.6vw,42px);line-height:1.15;margin:14px 0 12px}
+  .sec-head p{color:var(--dim);font-size:15.5px}
+
+  /* features */
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .feat{
+    background:var(--panel);border:1px solid var(--line-soft);border-radius:18px;
+    padding:26px 24px;transition:border-color .2s ease,transform .2s ease;
+  }
+  .feat:hover{border-color:rgba(232,194,104,.35);transform:translateY(-3px)}
+  .feat .glyph{
+    width:38px;height:38px;border-radius:11px;border:1px solid var(--line);
+    display:grid;place-items:center;color:var(--gold);font-size:16px;margin-bottom:16px;
+  }
+  .feat h3{font-size:16.5px;font-weight:600;margin-bottom:8px}
+  .feat p{font-size:13.5px;color:var(--dim);line-height:1.65}
+  .feat .demo-q{
+    margin-top:14px;font-size:12.5px;color:var(--gold);
+    border-left:2px solid var(--gold-dim);padding-left:10px;font-style:italic;
+  }
+
+  /* how it works */
+  .how{background:linear-gradient(180deg,transparent,rgba(232,194,104,.03),transparent)}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;counter-reset:step}
+  .step{
+    position:relative;background:var(--panel);border:1px solid var(--line-soft);
+    border-radius:18px;padding:28px 24px;
+  }
+  .step-num{font-family:var(--serif);font-size:38px;color:var(--gold);line-height:1}
+  .step h3{font-size:16.5px;font-weight:600;margin:14px 0 8px}
+  .step p{font-size:13.5px;color:var(--dim)}
+  .step small{display:block;margin-top:12px;font-size:11.5px;color:var(--gold-dim);letter-spacing:.06em}
+
+  /* pricing */
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
+  .plan{
+    background:var(--panel);border:1px solid var(--line-soft);border-radius:20px;
+    padding:30px 26px;display:flex;flex-direction:column;
+  }
+  .plan.pro{
+    border-color:rgba(232,194,104,.45);
+    background:linear-gradient(165deg,#181D31,#10141F);
+    box-shadow:0 30px 60px -38px rgba(232,194,104,.35);position:relative;
+  }
+  .plan .tag{
+    position:absolute;top:-11px;left:26px;background:var(--gold);color:#0A0D16;
+    font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 11px;border-radius:7px;
+  }
+  .plan h3{font-size:15px;font-weight:600;color:var(--dim)}
+  .price{font-family:var(--serif);font-size:44px;margin:10px 0 2px}
+  .price small{font-size:15px;color:var(--dim);font-family:var(--sans)}
+  .plan .for{font-size:12.5px;color:var(--dim);margin-bottom:20px}
+  .plan ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:26px;flex:1}
+  .plan li{font-size:13.5px;color:var(--ink);display:flex;gap:10px;line-height:1.55}
+  .plan li::before{content:"✓";color:var(--gold);font-weight:700;flex-shrink:0}
+  .plan li.off{color:var(--dim)}
+  .plan li.off::before{content:"—";color:var(--dim)}
+  .plan .btn{width:100%;text-align:center}
+
+  /* faq */
+  .faq{max-width:720px;margin:0 auto}
+  details{
+    border:1px solid var(--line-soft);border-radius:14px;background:var(--panel);
+    padding:18px 22px;margin-bottom:10px;
+  }
+  details[open]{border-color:rgba(232,194,104,.3)}
+  summary{
+    cursor:pointer;font-size:15px;font-weight:600;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-family:var(--serif);font-size:22px;color:var(--gold);transition:transform .2s}
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{margin-top:12px;font-size:14px;color:var(--dim);line-height:1.7}
+
+  /* cta band */
+  .band{
+    text-align:center;border:1px solid rgba(232,194,104,.3);border-radius:26px;
+    padding:64px 30px;background:
+      radial-gradient(70% 100% at 50% 0%,rgba(232,194,104,.1),transparent),
+      var(--panel);
+  }
+  .band h2{margin-top:0}
+  .band p{color:var(--dim);max-width:440px;margin:0 auto 28px}
+
+  footer{border-top:1px solid var(--line-soft);padding:38px 0 46px;margin-top:30px}
+  .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  .foot-note{font-size:12px;color:var(--dim);max-width:520px;line-height:1.7}
+  .foot-links{display:flex;gap:20px;font-size:13px;color:var(--dim)}
+  .foot-links a:hover{color:var(--ink)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+    html{scroll-behavior:auto}
+  }
+  @media (max-width:920px){
+    .hero-grid{grid-template-columns:1fr;gap:44px}
+    .phone{margin:0 auto}
+    .feat-grid,.steps,.price-grid{grid-template-columns:1fr}
+    .nav-links{display:none}
+    section{padding:64px 0}
+    .strip-in{justify-content:center;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="#"><span class="logo-mark">₹</span>Paisa</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="btn btn-gold nav-cta" href="#pricing">Start free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">AI personal finance · Made for India</div>
+      <h1>Your money, on <em>speaking terms.</em></h1>
+      <p class="lead">
+        Spends, insurance, SIPs, EMIs, taxes — scattered across ten apps and one anxious brain.
+        Paisa brings it into one place, then answers any question about it. Instantly, with your numbers.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-gold" href="#pricing">Start free — no card needed</a>
+        <a class="btn btn-ghost" href="#how">See how it works</a>
+      </div>
+      <div class="trust">
+        <span><i class="dot"></i>Bank-grade encryption</span>
+        <span><i class="dot"></i>RBI Account Aggregator</span>
+        <span><i class="dot"></i>Delete your data anytime</span>
+      </div>
+    </div>
+
+    <div class="phone" aria-label="Live demo of Paisa answering money questions">
+      <div class="phone-head">
+        <div class="phone-title"><span class="logo-mark">₹</span>Ask Paisa</div>
+        <span class="live">LIVE DEMO</span>
+      </div>
+      <div class="chat" id="chat"></div>
+    </div>
+  </div>
+</header>
+
+<!-- SCATTERED STRIP -->
+<div class="strip">
+  <div class="wrap strip-in">
+    <div class="scattered">
+      <span class="chip" style="--r:-2deg">Insurance PDFs</span>
+      <span class="chip" style="--r:1.5deg">3 banking apps</span>
+      <span class="chip" style="--r:-1deg">SIP statements</span>
+      <span class="chip" style="--r:2deg">Card bills</span>
+      <span class="chip" style="--r:-1.5deg">80C panic in March</span>
+    </div>
+    <div class="strip-msg">becomes <em>one conversation.</em></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">What Paisa does</div>
+      <h2>An agent that actually knows your finances.</h2>
+      <p>Not generic advice. Every answer is computed from your own transactions, policies, and portfolio.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal">
+        <div class="glyph">◎</div>
+        <h3>Expense tracking</h3>
+        <p>Auto-categorised spends across banks, UPI and cards. Type "450 swiggy yesterday" and it's logged.</p>
+        <div class="demo-q">"How much did I spend on food this month?"</div>
+      </div>
+      <div class="feat reveal">
+        <div class="glyph">◈</div>
+        <h3>Insurance reminders</h3>
+        <p>Every policy in one vault — life, health, vehicle. Renewal alerts land before the agent's phone call does.</p>
+        <div class="demo-q">"Which policy expires next?"</div>
+      </div>
+      <div class="feat reveal">
+        <div class="glyph">◉</div>
+        <h3>Tax preparation</h3>
+        <p>Live 80C and 80D tracking through the year. Know your headroom in July, not on March 28th.</p>
+        <div class="demo-q">"How much 80C room do I have left?"</div>
+      </div>
+      <div class="feat reveal">
+        <div class="glyph">◬</div>
+        <h3>Investment insights</h3>
+        <p>SIPs, mutual funds and PPF in one view, with plain-language readouts of how they're doing.</p>
+        <div class="demo-q">"Are my SIPs beating inflation?"</div>
+      </div>
+      <div class="feat reveal">
+        <div class="glyph">◍</div>
+        <h3>Financial planning</h3>
+        <p>Goal math grounded in your real cash flow — the phone, the bike, the emergency fund, the Goa trip.</p>
+        <div class="demo-q">"Can I afford a ₹40,000 phone right now?"</div>
+      </div>
+      <div class="feat reveal">
+        <div class="glyph">✦</div>
+        <h3>Ask anything</h3>
+        <p>The feature everything else feeds. One chat box, every money question, answered with your numbers in seconds.</p>
+        <div class="demo-q">"Where did my salary go this month?"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">How it works</div>
+      <h2>Three steps. Two minutes.</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>Connect securely</h3>
+        <p>Link your accounts through India's RBI-regulated Account Aggregator framework. Read-only access, with consent you control and can revoke.</p>
+        <small>SETU · FINVU · SAHAMATI</small>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>Paisa organises everything</h3>
+        <p>Transactions get categorised, policies get expiry-tracked, SIPs get valued, and your 80C position updates itself.</p>
+        <small>RUNS AUTOMATICALLY, DAILY</small>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3>Just ask</h3>
+        <p>Food spends, expiring policies, tax headroom, affordability checks — one question, one grounded answer.</p>
+        <small>UNDER 5 SECONDS, IN ENGLISH OR HINGLISH</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Pricing</div>
+      <h2>Costs less than one impulse Swiggy order.</h2>
+      <p>Start free. Upgrade when Paisa earns it.</p>
+    </div>
+    <div class="price-grid">
+      <div class="plan reveal">
+        <h3>Free</h3>
+        <div class="price">₹0</div>
+        <div class="for">For getting a feel of it</div>
+        <ul>
+          <li>Manual expense tracking</li>
+          <li>30 AI questions a month</li>
+          <li>3 insurance reminders</li>
+          <li>Monthly spend summary</li>
+          <li class="off">Auto bank sync</li>
+          <li class="off">Tax tracker</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">Start free</a>
+      </div>
+      <div class="plan pro reveal">
+        <span class="tag">MOST POPULAR</span>
+        <h3>Pro</h3>
+        <div class="price">₹199<small>/month</small></div>
+        <div class="for">For people with real money mess</div>
+        <ul>
+          <li>Auto-sync via Account Aggregator</li>
+          <li>Unlimited AI questions</li>
+          <li>Unlimited policies & reminders</li>
+          <li>Live 80C / 80D tax tracker</li>
+          <li>SIP & portfolio insights</li>
+          <li>Weekly money report</li>
+        </ul>
+        <a class="btn btn-gold" href="#">Get Pro</a>
+      </div>
+      <div class="plan reveal">
+        <h3>Premium</h3>
+        <div class="price">₹499<small>/month</small></div>
+        <div class="for">For families & filing season</div>
+        <ul>
+          <li>Everything in Pro</li>
+          <li>Tax-filing assistance (ITR)</li>
+          <li>Family accounts (up to 4)</li>
+          <li>Quarterly review with a human advisor</li>
+          <li>Priority support</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">Go Premium</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2>Fair questions.</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>Is it safe to connect my bank accounts?</summary>
+        <p>Connections run through the RBI-regulated Account Aggregator framework (the same rails used by major lenders), with read-only access. Paisa never sees your banking passwords, can never move money, and you can revoke consent or delete your data at any time.</p>
+      </details>
+      <details>
+        <summary>Does the AI give investment advice?</summary>
+        <p>No. Paisa explains, computes and reminds — your 80C headroom, your SIP returns, your spend patterns. It's educational and organisational, not a registered investment adviser, and it won't tell you which stock to buy.</p>
+      </details>
+      <details>
+        <summary>What can I ask it, really?</summary>
+        <p>Anything answerable from your data: "How much on Zomato this year?", "Which policy renews next?", "Can I afford this EMI?", "What changed versus last month?" If it's not in your data, it says so instead of guessing.</p>
+      </details>
+      <details>
+        <summary>Why is there a free plan?</summary>
+        <p>Because trust is earned. Track manually, ask 30 questions a month, and upgrade only when auto-sync and the tax tracker feel worth ₹199 — about one plate of momos a week.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section>
+  <div class="wrap">
+    <div class="band reveal">
+      <div class="eyebrow">Get started</div>
+      <h2>March-you will thank<br/>June-you for this.</h2>
+      <p>Set up in two minutes. Free to start, delete anytime, and your money finally answers back.</p>
+      <a class="btn btn-gold" href="#">Start free with Paisa</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>
+      <a class="logo" href="#" style="font-size:20px"><span class="logo-mark" style="width:24px;height:24px;font-size:13px">₹</span>Paisa</a>
+      <p class="foot-note" style="margin-top:14px">
+        Paisa is a financial organisation and education tool, not a SEBI-registered investment adviser.
+        Nothing here is investment, tax, or insurance advice — for decisions, consult a qualified professional.
+        © 2026 Paisa Labs, Patna.
+      </p>
+    </div>
+    <div class="foot-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Security</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── hero chat demo: types real Q&As on loop ── */
+  const PAIRS = [
+    {
+      q: "How much did I spend on food this month?",
+      a: "₹4,830 across 14 orders — Swiggy is 62% of it. That's ₹1,200 more than last month, mostly late-night orders after the 25th."
+    },
+    {
+      q: "Which insurance policy expires next?",
+      a: "Your bike insurance (Acko) renews in 11 days — ₹2,400. After that, the LIC term plan on the 23rd. Want a reminder 3 days before?"
+    },
+    {
+      q: "How much 80C room do I have left?",
+      a: "You've used ₹92,000 of ₹1,50,000 — ELSS ₹24k, PPF ₹50k, LIC ₹18k. ₹58,000 of headroom left; that's up to ~₹17,400 in tax saved."
+    },
+    {
+      q: "Can I afford a ₹40,000 phone right now?",
+      a: "Tight but yes. After rent, EMI and your card bill due in 6 days, you'd have ~₹9,000 buffer. Two months of saving makes it comfortable."
+    }
+  ];
+
+  const chat = document.getElementById("chat");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+  function bubble(cls){
+    const b = document.createElement("div");
+    b.className = "bubble " + cls;
+    chat.appendChild(b);
+    return b;
+  }
+
+  async function typeInto(el, text){
+    const caret = document.createElement("span");
+    caret.className = "caret";
+    el.appendChild(caret);
+    for (const ch of text){
+      caret.insertAdjacentText("beforebegin", ch);
+      await wait(26 + Math.random() * 30);
+    }
+    caret.remove();
+  }
+
+  async function loop(){
+    if (reduced){
+      // static version: show first two Q&As, no animation
+      PAIRS.slice(0,2).forEach(p => {
+        bubble("user").textContent = p.q;
+        bubble("ai").textContent = p.a;
+      });
+      return;
+    }
+    let i = 0;
+    while (true){
+      const p = PAIRS[i % PAIRS.length];
+      chat.innerHTML = "";
+      const u = bubble("user");
+      await typeInto(u, p.q);
+      await wait(420);
+      const t = bubble("ai");
+      t.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+      await wait(1300);
+      t.textContent = p.a;
+      await wait(4200);
+      i++;
+    }
+  }
+  loop();
+
+  /* ── scroll reveals ── */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+</script>
+</body>
+</html>
